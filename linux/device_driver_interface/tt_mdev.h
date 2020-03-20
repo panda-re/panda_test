@@ -30,8 +30,8 @@ static inline int tt_dev_generic_open(struct inode *inode, struct file *file) {
         TT_DEV_NAME,
         imajor(inode),
         iminor(inode),
-        (int)module_refcount(THIS_MODULE),
-        open_cnt
+        open_cnt,
+        (int)module_refcount(THIS_MODULE)
     );
 
     return 0;
@@ -46,8 +46,8 @@ static inline int tt_dev_generic_release(struct inode *inode, struct file *file)
         TT_DEV_NAME,
         imajor(inode),
         iminor(inode),
-        (int)module_refcount(THIS_MODULE),
-        close_cnt
+        close_cnt,
+        (int)module_refcount(THIS_MODULE)
     );
 
     return 0;

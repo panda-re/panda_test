@@ -9,7 +9,8 @@
 #include <time.h>
 #include <errno.h>
 
-#define TT_IOC_TYPE 't'
+#include "tt_ioctl_cmds.h"
+
 #define TT_IOW(type, nr, size) _IOC(_IOC_WRITE, (type), (nr), size)
 #define TT_IOR(type, nr, size) _IOC(_IOC_READ, (type), (nr), size)
 
@@ -69,7 +70,7 @@ int main(int argc, char *argv[]) {
     // Kernel Driver -> Process ----------------------------------------------------------------------------------------
 
     // RX: read kernel buffer
-    cmd = (int)TT_IOR(TT_IOC_TYPE, 1, buf_len);
+    cmd = (int)TT_IOR(TT_IOC_TYPE, R_EPHEME, buf_len);
     uncopied_byte_cnt = ioctl(fd, cmd, buffer);
     if(uncopied_byte_cnt) {
         fprintf(stderr, "Error reading from kernel buffer: %d uncopied bytes\n", uncopied_byte_cnt);
@@ -89,7 +90,7 @@ int main(int argc, char *argv[]) {
     }
 
     // TX: write kernel buffer
-    cmd = (int)TT_IOW(TT_IOC_TYPE, 1, buf_len);
+    cmd = (int)TT_IOW(TT_IOC_TYPE, W_EPHEME, buf_len);
     uncopied_byte_cnt = ioctl(fd, cmd, buffer);
     if(uncopied_byte_cnt) {
         fprintf(stderr, "Error writing to kernel buffer: %d uncopied bytes\n", uncopied_byte_cnt);
