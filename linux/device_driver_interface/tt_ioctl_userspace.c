@@ -8,6 +8,7 @@
 #include <string.h>
 #include <time.h>
 #include <errno.h>
+#include <assert.h>
 
 #include "tt_ioctl_cmds.h"
 
@@ -20,17 +21,42 @@ int init_random() {
     struct timespec ts;
 
     if (timespec_get(&ts, TIME_UTC) == 0) {
-        return 1;
+        return -1;
     }
 
     srandom(ts.tv_nsec ^ ts.tv_sec);
     return 0;
 }
 
+void notify_read(int uncopied_byte_cnt, uint8_t* buf, int buf_len) {
+
+    if(uncopied_byte_cnt) {
+        fprintf(stderr, "Error reading from kernel buffer: %d uncopied bytes\n", uncopied_byte_cnt);
+    } else {
+        puts("\nUserspace received kernel buffer: ");
+        for (int i = 0; i < buf_len; ++i) {
+            printf("0x%02x ", buf[i]);
+        }
+    }
+}
+
+void notify_write(int uncopied_byte_cnt, uint8_t* buf, int buf_len) {
+
+    if(uncopied_byte_cnt) {
+        fprintf(stderr, "Error writing to kernel buffer: %d uncopied bytes\n", uncopied_byte_cnt);
+    } else {
+        puts("\nUserspace transmitted buffer: ");
+        for (int i = 0; i < buf_len; ++i) {
+            printf("0x%02x ", buf[i]);
+        }
+    }
+}
+
 int main(int argc, char *argv[]) {
 
     int fd, uncopied_byte_cnt, curr_err, buf_len;
-    uint8_t *buffer;
+    uint8_t *buf;
+    uint8_t *buf_copy;
     char *dev_node_path = "/dev/taint_test_misc_device";
     int cmd;
 
@@ -61,45 +87,48 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    buffer = (uint8_t*)malloc(buf_len);
-    if (!buffer) {
+    buf = (uint8_t*)malloc(buf_len);
+    buf_copy = (uint8_t*)malloc(buf_len);
+    if ((!buf) || (!buf_copy)) {
         fprintf(stderr, "Error: failed to malloc %d bytes\n", buf_len);
         exit(EXIT_FAILURE);
     }
 
-    // Kernel Driver -> Process ----------------------------------------------------------------------------------------
-
-    // RX: read kernel buffer
-    cmd = (int)TT_IOR(TT_IOC_TYPE, R_EPHEME, buf_len);
-    uncopied_byte_cnt = ioctl(fd, cmd, buffer);
-    if(uncopied_byte_cnt) {
-        fprintf(stderr, "Error reading from kernel buffer: %d uncopied bytes\n", uncopied_byte_cnt);
-    } else {
-        puts("\nUserspace received kernel buffer: ");
-        for (int i = 0; i < buf_len; ++i) {
-            printf("0x%02x ", buffer[i]);
-        }
-    }
-
     // Process -> Kernel Driver ----------------------------------------------------------------------------------------
 
-    // Init buffer to write
-    init_random();
-    for (int i = 0; i < buf_len; ++i) {
-        buffer[i] = random() % (UINT8_MAX - 1);
+    if (init_random()) {
+        fprintf(stderr, "Error: failed to initialize random stream\n");
+        exit(EXIT_FAILURE);
     }
 
-    // TX: write kernel buffer
-    cmd = (int)TT_IOW(TT_IOC_TYPE, W_EPHEME, buf_len);
-    uncopied_byte_cnt = ioctl(fd, cmd, buffer);
-    if(uncopied_byte_cnt) {
-        fprintf(stderr, "Error writing to kernel buffer: %d uncopied bytes\n", uncopied_byte_cnt);
-    } else {
-        puts("\nUserspace transmitted buffer: ");
-        for (int i = 0; i < buf_len; ++i) {
-            printf("0x%02x ", buffer[i]);
-        }
+    // Init buffer to write and copy
+    for (int i = 0; i < buf_len; ++i) {
+        buf[i] = random() % (UINT8_MAX - 1);
     }
+    memcpy(buf_copy, buf, buf_len);
+
+    // Write ephemeral kernel buffer
+    cmd = (int)TT_IOW(TT_IOC_TYPE, W_EPHEME, buf_len);
+    uncopied_byte_cnt = ioctl(fd, cmd, buf);
+    notify_write(uncopied_byte_cnt, buf, buf_len);
+
+    // Write persistant kernel buffer
+    cmd = (int)TT_IOW(TT_IOC_TYPE, W_PERSIS, buf_len);
+    uncopied_byte_cnt = ioctl(fd, cmd, buf);
+    notify_write(uncopied_byte_cnt, buf, buf_len);
+
+    // Kernel Driver -> Process ----------------------------------------------------------------------------------------
+
+    // Read ephemeral kernel buffer
+    cmd = (int)TT_IOR(TT_IOC_TYPE, R_EPHEME, buf_len);
+    uncopied_byte_cnt = ioctl(fd, cmd, buf);
+    notify_read(uncopied_byte_cnt, buf, buf_len);
+
+    // Read and verify persistant kernel buffer
+    cmd = (int)TT_IOR(TT_IOC_TYPE, R_PERSIS, buf_len);
+    uncopied_byte_cnt = ioctl(fd, cmd, buf);
+    notify_read(uncopied_byte_cnt, buf, buf_len);
+    assert(!memcmp(buf, buf_copy, buf_len));
 
     // Process -> Kernel Driver -> Other Process -----------------------------------------------------------------------
 

@@ -10,36 +10,69 @@ static int sig_pid = -1;
 static struct task_struct *sig_task = NULL;
 static int sig_to_send = SIGKILL;
 
-static inline long tt_dev_unlocked_ioctl(struct file *fp, unsigned int cmd, unsigned long arg) {
+static int read_buf(void __user *io_argp, char* buf, int buf_len) {
 
-    // TODO (tnballo): Update logic to only allocate buffer for R/W, simplify cases by not switching on direction
-
-    int direction, buf_len, i, ret_val;
-    char *buffer;
-    void __user *io_argp = (void __user *)arg;
     int uncopied_byte_cnt = 0;
 
-    // Verify cmd
+    dev_info(tt_dev,"Reading %d bytes from device \'%s\' to userspace\n",
+        buf_len,
+        TT_DEV_NAME
+    );
+
+    uncopied_byte_cnt = copy_to_user(io_argp, buf, buf_len);
+    if (uncopied_byte_cnt) {
+        dev_err(tt_dev, "copy_to_user() failed byte cnt: %d\n", uncopied_byte_cnt);
+    }
+
+    return uncopied_byte_cnt;
+}
+
+static int write_buf(void __user *io_argp, char* buf, int buf_len) {
+
+    int uncopied_byte_cnt = 0;
+
+    dev_info(tt_dev,"Writing %d bytes from userspace to device\'%s\'\n",
+        buf_len,
+        TT_DEV_NAME
+    );
+
+    uncopied_byte_cnt = copy_from_user(buf, io_argp, buf_len);
+    if (uncopied_byte_cnt) {
+        dev_err(tt_dev, "copy_from_user() failed byte cnt: %d\n", uncopied_byte_cnt);
+    }
+
+    return uncopied_byte_cnt;
+}
+
+static inline long tt_dev_unlocked_ioctl(struct file *fp, unsigned int cmd, unsigned long arg) {
+
+    int direction, buf_len, i;
+    void __user *io_argp = (void __user *)arg;
+    int ret_val = 0;
+    char *buf = NULL;
+
     if (_IOC_TYPE(cmd) != TT_IOC_TYPE) {
         dev_err(tt_dev, "Invalid cmd (0x%x), type error\n", cmd);
         return -EINVAL;
     }
 
-    // kmalloc buffer of requested buf_len
     buf_len = _IOC_SIZE(cmd);
-    buffer = kmalloc((size_t)buf_len, GFP_KERNEL);
-    if (!buffer) {
-        dev_err(tt_dev, "Failed to kmalloc %d bytes\n", buf_len);
-        return -ENOMEM;
+    if (buf_len > TT_KBUF_MAX) {
+        dev_err(tt_dev, "Exceeded buffer size limit: %lu bytes\n", TT_KBUF_MAX);
+        return -EINVAL;
     }
 
-    // Init buffer with default constant
-    memset(buffer, DEF_CONST, buf_len);
+    if ((_IOC_NR(cmd) == R_EPHEME) || (_IOC_NR(cmd) == W_EPHEME)) {
 
-    // TODO (tnballo): Start backing the dynamic temp buf with tt_dev_kbuf for "last written" persistance
-    // Right now, ioctl read is static and decoupled from /dev/taint_test_misc_device read/write
+        buf = kmalloc((size_t)buf_len, GFP_KERNEL);
+        if (!buf) {
+            dev_err(tt_dev, "Failed to kmalloc %d bytes\n", buf_len);
+            return -ENOMEM;
+        }
 
-    // Handle request
+        memset(buf, DEF_CONST, buf_len);
+    }
+
     direction = _IOC_DIR(cmd);
     switch (direction) {
 
@@ -51,20 +84,13 @@ static inline long tt_dev_unlocked_ioctl(struct file *fp, unsigned int cmd, unsi
 
                 // Ephemeral write
                 case W_EPHEME:
-
-                    dev_info(tt_dev,"Writing %d bytes from userspace to device \'%s\'\n",
-                        buf_len,
-                        TT_DEV_NAME
-                    );
-
-                    uncopied_byte_cnt = copy_from_user(buffer, io_argp, buf_len);
-                    dev_info(tt_dev, "copy_from_user() failed byte cnt: %d\n", uncopied_byte_cnt);
+                    ret_val = write_buf(io_argp, buf, buf_len);
+                    kfree(buf);
                     break;
 
                 // Persistant write
                 case W_PERSIS:
-
-                    // TODO(tnballo): implement
+                    ret_val = write_buf(io_argp, tt_dev_kbuf, buf_len);
                     break;
 
                 default:
@@ -82,24 +108,19 @@ static inline long tt_dev_unlocked_ioctl(struct file *fp, unsigned int cmd, unsi
                 // Ephemeral read
                 case R_EPHEME:
 
-                    dev_info(tt_dev,"Reading %d bytes from device \'%s\' to userspace\n",
-                        buf_len,
-                        TT_DEV_NAME
-                    );
-
                     // Current buff contents XORed with an arbitray constant
+                    // TODO (tnballo): taint label test for 2 labels
                     for (i = 0; i < buf_len; ++i) {
-                        buffer[i] = buffer[i] ^ XOR_CONST;
+                        buf[i] = buf[i] ^ XOR_CONST;
                     }
 
-                    uncopied_byte_cnt = copy_to_user(io_argp, buffer, buf_len);
-                    dev_info(tt_dev, "copy_to_user() failed byte cnt: %d\n", uncopied_byte_cnt);
+                    ret_val = read_buf(io_argp, buf, buf_len);
+                    kfree(buf);
                     break;
 
                 // Persistant read
                 case R_PERSIS:
-
-                    // TODO (tnballo): implement
+                    ret_val = read_buf(io_argp, tt_dev_kbuf, buf_len);
                     break;
 
                 default:
@@ -116,14 +137,12 @@ static inline long tt_dev_unlocked_ioctl(struct file *fp, unsigned int cmd, unsi
 
                 // Set signal to send
                 case SET_SIGN:
-
                     sig_to_send = (int)arg;
                     dev_info(tt_dev, "Set signal to send: %d\n", sig_to_send);
                     break;
 
                 // Set PID to send signal to
                 case SET_PIDN:
-
                     sig_pid = (int)arg;
                     dev_info(tt_dev, "Set pid to send signals to: %d\n", sig_pid);
                     sig_task = pid_task(find_vpid(sig_pid), PIDTYPE_PID);
@@ -156,14 +175,12 @@ static inline long tt_dev_unlocked_ioctl(struct file *fp, unsigned int cmd, unsi
             }
             break;
 
-        // Error
         default:
             dev_err(tt_dev, "Invalid cmd (0x%x): bad direction\n", cmd);
             return -EINVAL;
     }
 
-    kfree(buffer);
-    return uncopied_byte_cnt;
+    return ret_val;
 }
 
 // Module init ---------------------------------------------------------------------------------------------------------

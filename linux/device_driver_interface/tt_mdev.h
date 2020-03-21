@@ -12,10 +12,12 @@
 #include <linux/oom.h>
 
 #define TT_DEV_NAME "taint_test_misc_device"
+#define TT_KBUF_MAX (16 * PAGE_SIZE)
+
 static struct device *tt_dev;
 
 static char *tt_dev_kbuf;
-static size_t tt_dev_kbuf_size = (16 * PAGE_SIZE);
+static size_t tt_dev_kbuf_size = TT_KBUF_MAX;
 
 static const struct file_operations tt_dev_fops;
 

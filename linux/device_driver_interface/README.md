@@ -2,18 +2,14 @@
 
 ### About
 
-Non-exhaustive test (specific subset) of the following whole-system taint transfers:
+Tests for the following whole-system taint transfers (TODO):
 
-* Process -> Kernel Driver
-* Kernel Driver -> Process
-* (TODO) Process -> Kernel Driver -> Other Process (signal-triggered)
-
-Exhaustive test for driver file abstractions (e.g. `/dev/device` and `/sys/device`(TODO)).
-
-* Process -> Driver Inode
-* Driver Inode -> Process
+* Process -> Kernel (via `ioctl` or driver inode)
+* Kernel -> Process (via `ioctl` or driver inode)
+* Process -> Kernel -> Other Process (via signal-triggered `ioctl` or driver inode)
 
 Tests are exercised by two components: a [userspace program](./tt_ioctl_userspace.c) and a [kernel module](./tt_ioctl_module.c) that supports [a list of commands](./tt_ioctl_cmds.h).
+Driver inodes are `proc` filesystem paths (e.g. `/dev/device` and `/sys/device`).
 
 ### Setup
 
