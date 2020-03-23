@@ -1,9 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <signal.h>
 #include <malloc.h>
 #include <string.h>
 #include <time.h>
@@ -12,8 +16,15 @@
 
 #include "tt_ioctl_cmds.h"
 
-#define TT_IOW(type, nr, size) _IOC(_IOC_WRITE, (type), (nr), size)
-#define TT_IOR(type, nr, size) _IOC(_IOC_READ, (type), (nr), size)
+#define TT_IOW(type, nr, size) ((int)_IOC(_IOC_WRITE, (type), (nr), size))
+#define TT_IOR(type, nr, size) ((int)_IOC(_IOC_READ, (type), (nr), size))
+#define TT_IO(type, nr) ((int)_IO((type), (nr)))
+
+uint8_t *buf = NULL;
+uint8_t *buf_copy = NULL;
+int buf_len = 0;
+int fd = 0;
+bool sig_triggered_copy_ok = false;
 
 // CERT MSC30-C
 int init_random() {
@@ -33,10 +44,11 @@ void notify_read(int uncopied_byte_cnt, uint8_t* buf, int buf_len) {
     if(uncopied_byte_cnt) {
         fprintf(stderr, "Error reading from kernel buffer: %d uncopied bytes\n", uncopied_byte_cnt);
     } else {
-        puts("\nUserspace received kernel buffer: ");
+        puts("Userspace received kernel buffer: ");
         for (int i = 0; i < buf_len; ++i) {
             printf("0x%02x ", buf[i]);
         }
+        puts("\n");
     }
 }
 
@@ -45,20 +57,41 @@ void notify_write(int uncopied_byte_cnt, uint8_t* buf, int buf_len) {
     if(uncopied_byte_cnt) {
         fprintf(stderr, "Error writing to kernel buffer: %d uncopied bytes\n", uncopied_byte_cnt);
     } else {
-        puts("\nUserspace transmitted buffer: ");
+        puts("Userspace transmitted buffer: ");
         for (int i = 0; i < buf_len; ++i) {
             printf("0x%02x ", buf[i]);
         }
+        puts("\n");
     }
+}
+
+void copy_buf_handler(int sig) {
+
+    sigset_t mask, prev_mask;
+    int cmd;
+
+    // Block other signals
+    sigfillset(&mask);
+    sigprocmask(SIG_BLOCK, &mask, &prev_mask);
+
+    // Read persistant kernel buffer
+    if ((sig == SIGIO) && (buf != NULL) && (buf_len > 0)) {
+        cmd = TT_IOR(TT_IOC_TYPE, R_PERSIS, buf_len);
+        if (!ioctl(fd, cmd, buf)) {
+            sig_triggered_copy_ok = true;
+        }
+    }
+
+    // Unblock other signals
+    sigprocmask(SIG_SETMASK, &prev_mask, NULL);
 }
 
 int main(int argc, char *argv[]) {
 
-    int fd, uncopied_byte_cnt, curr_err, buf_len;
-    uint8_t *buf;
-    uint8_t *buf_copy;
-    char *dev_node_path = "/dev/taint_test_misc_device";
+    int uncopied_byte_cnt, status;
     int cmd;
+    pid_t pid;
+    char *dev_node_path = "/dev/taint_test_misc_device";
 
     // Init ------------------------------------------------------------------------------------------------------------
 
@@ -82,8 +115,7 @@ int main(int argc, char *argv[]) {
 
     fd = open(dev_node_path, O_RDWR);
     if (!fd) {
-        curr_err = errno;
-        fprintf(stderr, "Error opening device node: %s\n", strerror(curr_err));
+        fprintf(stderr, "Error opening device node: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
 
@@ -91,6 +123,11 @@ int main(int argc, char *argv[]) {
     buf_copy = (uint8_t*)malloc(buf_len);
     if ((!buf) || (!buf_copy)) {
         fprintf(stderr, "Error: failed to malloc %d bytes\n", buf_len);
+        exit(EXIT_FAILURE);
+    }
+
+    if (signal(SIGIO, copy_buf_handler) == SIG_ERR) {
+        fprintf(stderr, "Error registering handler: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
 
@@ -108,33 +145,82 @@ int main(int argc, char *argv[]) {
     memcpy(buf_copy, buf, buf_len);
 
     // Write ephemeral kernel buffer
-    cmd = (int)TT_IOW(TT_IOC_TYPE, W_EPHEME, buf_len);
+    cmd = TT_IOW(TT_IOC_TYPE, W_EPHEME, buf_len);
     uncopied_byte_cnt = ioctl(fd, cmd, buf);
     notify_write(uncopied_byte_cnt, buf, buf_len);
 
     // Write persistant kernel buffer
-    cmd = (int)TT_IOW(TT_IOC_TYPE, W_PERSIS, buf_len);
+    cmd = TT_IOW(TT_IOC_TYPE, W_PERSIS, buf_len);
     uncopied_byte_cnt = ioctl(fd, cmd, buf);
     notify_write(uncopied_byte_cnt, buf, buf_len);
 
     // Kernel Driver -> Process ----------------------------------------------------------------------------------------
 
     // Read ephemeral kernel buffer
-    cmd = (int)TT_IOR(TT_IOC_TYPE, R_EPHEME, buf_len);
+    cmd = TT_IOR(TT_IOC_TYPE, R_EPHEME, buf_len);
     uncopied_byte_cnt = ioctl(fd, cmd, buf);
     notify_read(uncopied_byte_cnt, buf, buf_len);
 
     // Read and verify persistant kernel buffer
-    cmd = (int)TT_IOR(TT_IOC_TYPE, R_PERSIS, buf_len);
+    cmd = TT_IOR(TT_IOC_TYPE, R_PERSIS, buf_len);
     uncopied_byte_cnt = ioctl(fd, cmd, buf);
     notify_read(uncopied_byte_cnt, buf, buf_len);
     assert(!memcmp(buf, buf_copy, buf_len));
 
     // Process -> Kernel Driver -> Other Process -----------------------------------------------------------------------
 
-    // TODO (tnballo): add child fork and signal to trigger data copy here
+    memset(buf, 0, buf_len);
+    pid = fork();
 
-    puts("\n");
+    if (pid == -1) {
+
+        fprintf(stderr, "Error forking child: %s\n", strerror(errno));
+        exit(EXIT_FAILURE);
+
+    // Child: wait for specific signal from parent
+    } else if (pid == 0) {
+
+        while (!sig_triggered_copy_ok) {
+            sleep(1);
+        }
+
+        if (buf_copy && (!memcmp(buf, buf_copy, buf_len))) {
+            printf("Signal-triggered buffer copy to child process succeeded.\n");
+            exit(EXIT_SUCCESS);
+        } else {
+            exit(EXIT_FAILURE);
+        }
+
+    // Parent: signal child to copy in buffer from kernelspace
+    } else {
+
+        // Set signal
+        cmd = TT_IO(TT_IOC_TYPE, SET_SIGN);
+        assert(!ioctl(fd, cmd, SIGIO));
+
+        // Set target pid
+        cmd = TT_IO(TT_IOC_TYPE, SET_PIDN);
+        assert(!ioctl(fd, cmd, pid));
+
+        // Send signal
+        cmd = TT_IO(TT_IOC_TYPE, SEND_SIG);
+        assert(!ioctl(fd, cmd));
+
+        // Wait for successful termination
+        waitpid(pid, &status, WUNTRACED);
+        if (WIFEXITED(status)) {
+            if (WEXITSTATUS(status) == 0) {
+                printf("Test complete.\n");
+            } else {
+                fprintf(stderr, "Error: child exited with %d\n", WEXITSTATUS(status));
+                exit(EXIT_FAILURE);
+            }
+        } else {
+            fprintf(stderr, "Error: child didn't terminate normally.\n");
+            exit(EXIT_FAILURE);
+        }
+    }
+
     close(fd);
     exit(EXIT_SUCCESS);
 }
