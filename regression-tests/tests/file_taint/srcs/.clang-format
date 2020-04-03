@@ -1,0 +1,12 @@
+---
+# Clang Format settings derived from the QEMU\Linux Kernel coding style.
+# https://github.com/portante/qemu/blob/master/CODING_STYLE
+Language: Cpp
+IndentWidth: 4
+UseTab: Never
+ColumnLimit: 80
+BreakBeforeBraces: Linux
+AllowShortBlocksOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false

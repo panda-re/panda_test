@@ -1,0 +1,4 @@
+*.pyc
+*_string_matches.txt
+*.exe
+*.elf
