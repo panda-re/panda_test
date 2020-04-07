@@ -1,0 +1,112 @@
+PANDA[taint2]:apply_single_label(addr: ADDRESS0, len: 1, label: ABCDEF00)
+
+PANDA[taint2]:apply_single_label(addr: ADDRESS1, len: 1, label: ABCDEF01)
+
+PANDA[taint2]:apply_single_label(addr: ADDRESS2, len: 1, label: ABCDEF02)
+
+PANDA[taint2]:apply_single_label(addr: ADDRESS3, len: 1, label: ABCDEF03)
+
+PANDA[taint2]:apply_single_label(addr: ADDRESS4, len: 1, label: ABCDEF04)
+
+PANDA[taint2]:apply_single_label(addr: ADDRESS5, len: 1, label: ABCDEF05)
+
+PANDA[taint2]:apply_single_label(addr: ADDRESS6, len: 1, label: ABCDEF06)
+
+PANDA[taint2]:apply_single_label(addr: ADDRESS7, len: 1, label: ABCDEF07)
+
+PANDA[taint2]:query labels on memory
+
+PANDA[taint2]:query labels on memory
+
+PANDA[taint2]:assert positive taint_contains(addr: ADDRESS0, label: ABCDEF00)
+
+PANDA[taint2]:query labels on memory
+
+PANDA[taint2]:query labels on memory
+
+PANDA[taint2]:assert positive taint_contains(addr: ADDRESS1, label: ABCDEF01)
+
+PANDA[taint2]:query labels on memory
+
+PANDA[taint2]:query labels on memory
+
+PANDA[taint2]:assert positive taint_contains(addr: ADDRESS2, label: ABCDEF02)
+
+PANDA[taint2]:query labels on memory
+
+PANDA[taint2]:query labels on memory
+
+PANDA[taint2]:assert positive taint_contains(addr: ADDRESS3, label: ABCDEF03)
+
+PANDA[taint2]:query labels on memory
+
+PANDA[taint2]:query labels on memory
+
+PANDA[taint2]:assert positive taint_contains(addr: ADDRESS4, label: ABCDEF04)
+
+PANDA[taint2]:query labels on memory
+
+PANDA[taint2]:query labels on memory
+
+PANDA[taint2]:assert positive taint_contains(addr: ADDRESS5, label: ABCDEF05)
+
+PANDA[taint2]:query labels on memory
+
+PANDA[taint2]:query labels on memory
+
+PANDA[taint2]:assert positive taint_contains(addr: ADDRESS6, label: ABCDEF06)
+
+PANDA[taint2]:query labels on memory
+
+PANDA[taint2]:query labels on memory
+
+PANDA[taint2]:assert positive taint_contains(addr: ADDRESS7, label: ABCDEF07)
+
+PANDA[taint2]:query labels on memory
+
+PANDA[taint2]:query labels on memory
+
+PANDA[taint2]:assert positive taint_contains(addr: ADDRESS_UNLABELED, label: ABCDEF00)
+
+PANDA[taint2]:query labels on memory
+
+PANDA[taint2]:query labels on memory
+
+PANDA[taint2]:assert positive taint_contains(addr: ADDRESS_UNLABELED, label: ABCDEF01)
+
+PANDA[taint2]:query labels on memory
+
+PANDA[taint2]:query labels on memory
+
+PANDA[taint2]:assert positive taint_contains(addr: ADDRESS_UNLABELED, label: ABCDEF02)
+
+PANDA[taint2]:query labels on memory
+
+PANDA[taint2]:query labels on memory
+
+PANDA[taint2]:assert positive taint_contains(addr: ADDRESS_UNLABELED, label: ABCDEF03)
+
+PANDA[taint2]:query labels on memory
+
+PANDA[taint2]:query labels on memory
+
+PANDA[taint2]:assert positive taint_contains(addr: ADDRESS_UNLABELED, label: ABCDEF04)
+
+PANDA[taint2]:query labels on memory
+
+PANDA[taint2]:query labels on memory
+
+PANDA[taint2]:assert positive taint_contains(addr: ADDRESS_UNLABELED, label: ABCDEF05)
+
+PANDA[taint2]:query labels on memory
+
+PANDA[taint2]:query labels on memory
+
+PANDA[taint2]:assert positive taint_contains(addr: ADDRESS_UNLABELED, label: ABCDEF06)
+
+PANDA[taint2]:query labels on memory
+
+PANDA[taint2]:query labels on memory
+
+PANDA[taint2]:assert positive taint_contains(addr: ADDRESS_UNLABELED, label: ABCDEF07)
+
