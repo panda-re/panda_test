@@ -46,6 +46,46 @@ CSRC=			\
 		div_uint16 \
 		div_uint32 \
 		div_uint64 \
+		bwand_sint8 \
+		bwand_sint16 \
+		bwand_sint32 \
+		bwand_sint64 \
+		bwand_uint8 \
+		bwand_uint16 \
+		bwand_uint32 \
+		bwand_uint64 \
+		bwor_sint8 \
+		bwor_sint16 \
+		bwor_sint32 \
+		bwor_sint64 \
+		bwor_uint8 \
+		bwor_uint16 \
+		bwor_uint32 \
+		bwor_uint64 \
+		bwxor_sint8 \
+		bwxor_sint16 \
+		bwxor_sint32 \
+	 	bwxor_sint64 \
+		bwxor_uint8 \
+		bwxor_uint16 \
+		bwxor_uint32 \
+		bwxor_uint64 \
+		bwsl_sint8 \
+		bwsl_sint16 \
+		bwsl_sint32 \
+		bwsl_sint64 \
+		bwsl_uint8 \
+		bwsl_uint16 \
+		bwsl_uint32 \
+		bwsl_uint64 \
+		bwsr_sint8 \
+		bwsr_sint16 \
+		bwsr_sint32 \
+		bwsr_sint64 \
+		bwsr_uint8 \
+		bwsr_uint16 \
+		bwsr_uint32 \
+		bwsr_uint64 \
 		turn_on_taint	\
 		test_label		\
 		testmalloc		\

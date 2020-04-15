@@ -16,7 +16,6 @@ void panda_assert_taint_label_range(void *buf, size_t len, uint32_t expected_lab
     }
 }
 
-// SUB - label two vars, subtract and assign to third var
 #define the_op   -
 #define the_type int16_t
 #define x_LABEL 0xCCCCCCCC

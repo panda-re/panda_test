@@ -16,20 +16,7 @@ void panda_assert_taint_label_range(void *buf, size_t len, uint32_t expected_lab
     }
 }
 
-// ADD - label two vars, add and assign to third var
-/*
- x;
- y;
- z;
-Lx = set taint label on x
-Ly = set taint label on y
-x = 1
-assert get taint label on x = Lx
-y = 2
-assert get taint label on y = Ly
-z = x + y
-assert get taint label on z = (Lx & Ly)
-*/
+#define the_op +
 #define the_type uint64_t
 #define x_LABEL 0xCCCCCCCC
 #define y_LABEL 0xDDDDDDDD
@@ -45,7 +32,7 @@ int main(int argc, char **argv) {
     panda_assert_taint_label_range(&x, sizeof(the_type), x_LABEL);
     panda_assert_taint_label_range(&y, sizeof(the_type), y_LABEL);
 
-    z = x + y;
+    z = x the_op y;
 
     panda_assert_taint_label_range(&z, sizeof(the_type), x_LABEL);
     panda_assert_taint_label_range(&z, sizeof(the_type), y_LABEL);
