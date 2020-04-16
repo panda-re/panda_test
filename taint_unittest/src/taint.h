@@ -1,17 +1,18 @@
 #ifndef __TAINT_H__
 #define __TAINT_H__
 
+#include <stdlib.h>
+#include <stdint.h>
+
 #define TARGET_I386
 
-/*#if !defined(TARGET_I386) && !defined(TARGET_ARM)
-#error "Define your architecture (TARGET_I386 or TARGET_ARM) with -D"
+#if !defined(TARGET_I386)
+#error "Define your architecture (TARGET_I386) with -D"
 #endif
-*/
+
 static const int LABEL_BUFFER = 7;
 static const int LABEL_BUFFER_POS = 8;
 static const int QUERY_BUFFER = 9;
-
-//#define 
 
 static inline void hypercall_query_reg(uint32_t reg_num, uint32_t off, long label) {
   int eax = 11;
@@ -19,7 +20,6 @@ static inline void hypercall_query_reg(uint32_t reg_num, uint32_t off, long labe
   unsigned long ecx = off;
   unsigned long edx = 0;
   long edi = label;
-
 
   asm __volatile__
       ("mov  %0, %%eax \t\n\
@@ -59,7 +59,7 @@ static inline void hypercall_label_reg(uint32_t reg_num, uint32_t off, long labe
   return;
 }
 
-static inline void turn_on_taint() {
+static inline void hypercall_enable_taint() {
     int eax = 6;
     int ebx,ecx,edx,edi;
     edi = edx = ecx = ebx = eax;
@@ -134,12 +134,6 @@ static inline
       : "g" (eax), "g" (ebx), "g" (ecx), "g" (edx), "g" (edi)
        : "eax", "ebx", "ecx", "edx", "edi" 
       );
-
-//  if(eax < 0 | eax > 16) {
-//	  eax = 0;
-//  }
-
-//  return *num_labels;
 }
 //#endif // TARGET_I386
 
@@ -148,33 +142,24 @@ static inline
  *  * label is the label to be applied to the buffer
  *   * len is the length of the buffer to be labeled */
 static inline
-void vm_label_buffer(void *buf, int label, unsigned long len) {
+void panda_taint_label_buffer(void *buf, int label, unsigned long len) {
     hypercall(buf, len, label, 0, LABEL_BUFFER);
 }
 
 static inline
-void /*uint32_t*/ vm_query_buffer(void *buf, unsigned long off, long label) {
+void panda_taint_query_buffer(void *buf, unsigned long off, long label) {
     hypercall_for_query(buf, off, label);
-/*
-    int num_labels;
-   
-//if(outbuf == 0) {
+}
 
-   hypercall_for_query(buf, off, 0, &num_labels);
 
-    if (num_labels > 0) {
-        uint32_t *label_buffer = (uint32_t *)malloc(sizeof(uint32_t) * num_labels);
-	printf("label_buffer %08X\n", label_buffer);
-	printf("outbufaddr %08X\n", outbufaddr);
-	printf("*outbufaddr %08X\n", *((uint32_t *)outbufaddr));
-        *((uint32_t *)outbufaddr) = &label_buffer[0];
+static void panda_taint_assert_label(void *buf, uint32_t off, uint32_t expected_label) {
+        panda_taint_query_buffer(buf, off, expected_label);
+}
 
-	hypercall_for_query(buf, off, label_buffer, &num_labels);
+static void panda_taint_assert_label_range(void *buf, size_t len, uint32_t expected_label) {
+    int i;
+    for(i=0;i<len;i++) {
+        panda_taint_assert_label(buf, i, expected_label);
     }
-    else {
-        *((uint32_t *)outbufaddr) = NULL;
-    }
-
-    return num_labels;*/
 }
 #endif

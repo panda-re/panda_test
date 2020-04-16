@@ -1,14 +1,10 @@
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdint.h>
-
 // contains hypercall code
 #include "taint.h"
 
+// does what it says and does nothing else
 int main(int argc, char **argv) {
 
-    turn_on_taint();
+    hypercall_enable_taint();
 
     return 0;
 }

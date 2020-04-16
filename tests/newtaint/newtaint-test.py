@@ -197,6 +197,9 @@ os.system("mv " + tmpoutdir + "/taint2_log " + thisdir + "/taint2_logs/taint2_lo
 run_test_debian("-panda taint2 ", 'cd11',"i386")
 os.system("mv " + tmpoutdir + "/taint2_log " + thisdir + "/taint2_logs/taint2_log_11")
 
+run_test_debian("-panda taint2 ", 'cdlabel',"i386")
+os.system("mv " + tmpoutdir + "/taint2_log " + thisdir + "/taint2_logs/taint2_log_label")
+
 os.system("mv " + thisdir+"/taint2_logs/* " + tmpoutdir)
 
 os.system("rmdir " + thisdir+"/taint2_logs")

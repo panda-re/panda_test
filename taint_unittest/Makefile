@@ -87,10 +87,10 @@ CSRC=			\
 		bwsr_uint32 \
 		bwsr_uint64 \
 		turn_on_taint	\
-		test_label		\
-		testmalloc		\
-		testmemset		\
-		testmemcpy	\
+		label		\
+		malloc		\
+		memset		\
+		memcpy	\
 		test11
 
 ASMSRC=			\

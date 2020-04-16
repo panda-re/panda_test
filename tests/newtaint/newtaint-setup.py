@@ -206,6 +206,10 @@ os.mkdir(os.path.join(replaypath, "cdmemcpy", "cdrom"))
 os.mkdir(os.path.join(replaypath, "cd11"))
 os.mkdir(os.path.join(replaypath, "cd11", "cdrom"))
 
+os.mkdir(os.path.join(replaypath, "cdlabel"))
+os.mkdir(os.path.join(replaypath, "cdlabel", "cdrom"))
+
+
 tutpath = os.path.join(newtaintpath, "panda_test", "taint_unittest")
 
 os.system("cd " + tutpath + " && ./build.sh")
@@ -305,6 +309,9 @@ os.system("cd " + os.path.join(tutpath, "bin") + " && cp * " + os.path.join(repl
 os.system("cd " + os.path.join(tutpath, "bin") + " && cp * " + os.path.join(replaypath, "cdmemcpy", "cdrom"))
 os.system("cd " + os.path.join(tutpath, "bin") + " && cp * " + os.path.join(replaypath, "cd11", "cdrom"))
 
+os.system("cd " + os.path.join(tutpath, "bin") + " && cp * " + os.path.join(replaypath, "cdlabel", "cdrom"))
+
+
 guestcmde = "guest:cde || cd " + os.path.join(replaypath, "cde", "cdrom") + " && ./turn_on_taint && ./eax_test"
 
 guestcmdad = "guest:cdad || cd " + os.path.join(replaypath, "cdad", "cdrom") + " && ./turn_on_taint && ./add_double"
@@ -396,10 +403,12 @@ guestcmdbwsrs16 = "guest:cdbwsrs16 || cd " + os.path.join(replaypath, "cdbwsrs16
 guestcmdbwsrs32 = "guest:cdbwsrs32 || cd " + os.path.join(replaypath, "cdbwsrs32", "cdrom") + " && ./turn_on_taint && ./bwsr_sint32"
 guestcmdbwsrs64 = "guest:cdbwsrs64 || cd " + os.path.join(replaypath, "cdbwsrs64", "cdrom") + " && ./turn_on_taint && ./bwsr_sint64"
 
-guestcmdmalloc = "guest:cdmalloc || cd " + os.path.join(replaypath, "cdmalloc", "cdrom") + " && ./turn_on_taint && ./testmalloc"
-guestcmdmemset = "guest:cdmemset || cd " + os.path.join(replaypath, "cdmemset", "cdrom") + " && ./turn_on_taint && ./testmemset"
-guestcmdmemcpy = "guest:cdmemcpy || cd " + os.path.join(replaypath, "cdmemcpy", "cdrom") + " && ./turn_on_taint && ./testmemcpy"
+guestcmdmalloc = "guest:cdmalloc || cd " + os.path.join(replaypath, "cdmalloc", "cdrom") + " && ./turn_on_taint && ./malloc"
+guestcmdmemset = "guest:cdmemset || cd " + os.path.join(replaypath, "cdmemset", "cdrom") + " && ./turn_on_taint && ./memset"
+guestcmdmemcpy = "guest:cdmemcpy || cd " + os.path.join(replaypath, "cdmemcpy", "cdrom") + " && ./turn_on_taint && ./memcpy"
 guestcmd11 = "guest:cd11 || cd " + os.path.join(replaypath, "cd11", "cdrom") + " && ./turn_on_taint && ./test11"
+
+guestcmdlabel = "guest:cdlabel || cd " + os.path.join(replaypath, "cdlabel", "cdrom") + " && ./turn_on_taint && ./label"
 
 
 
@@ -771,6 +780,13 @@ except:
     print("ok")
 try:
     record_debian(guestcmd11, "cd11", "i386")
+except:
+    print("ok")
+
+
+
+try:
+    record_debian(guestcmdlabel, "cdlabel", "i386")
 except:
     print("ok")
 
