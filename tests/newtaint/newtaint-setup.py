@@ -112,6 +112,40 @@ os.mkdir(os.path.join(replaypath, "cdds32", "cdrom"))
 os.mkdir(os.path.join(replaypath, "cdds64"))
 os.mkdir(os.path.join(replaypath, "cdds64", "cdrom"))
 
+os.mkdir(os.path.join(replaypath, "cdmodu8"))
+os.mkdir(os.path.join(replaypath, "cdmodu8", "cdrom"))
+os.mkdir(os.path.join(replaypath, "cdmodu16"))
+os.mkdir(os.path.join(replaypath, "cdmodu16", "cdrom"))
+os.mkdir(os.path.join(replaypath, "cdmodu32"))
+os.mkdir(os.path.join(replaypath, "cdmodu32", "cdrom"))
+os.mkdir(os.path.join(replaypath, "cdmodu64"))
+os.mkdir(os.path.join(replaypath, "cdmodu64", "cdrom"))
+os.mkdir(os.path.join(replaypath, "cdmods8"))
+os.mkdir(os.path.join(replaypath, "cdmods8", "cdrom"))
+os.mkdir(os.path.join(replaypath, "cdmods16"))
+os.mkdir(os.path.join(replaypath, "cdmods16", "cdrom"))
+os.mkdir(os.path.join(replaypath, "cdmods32"))
+os.mkdir(os.path.join(replaypath, "cdmods32", "cdrom"))
+os.mkdir(os.path.join(replaypath, "cdmods64"))
+os.mkdir(os.path.join(replaypath, "cdmods64", "cdrom"))
+
+os.mkdir(os.path.join(replaypath, "cdbwnu8"))
+os.mkdir(os.path.join(replaypath, "cdbwnu8", "cdrom"))
+os.mkdir(os.path.join(replaypath, "cdbwnu16"))
+os.mkdir(os.path.join(replaypath, "cdbwnu16", "cdrom"))
+os.mkdir(os.path.join(replaypath, "cdbwnu32"))
+os.mkdir(os.path.join(replaypath, "cdbwnu32", "cdrom"))
+os.mkdir(os.path.join(replaypath, "cdbwnu64"))
+os.mkdir(os.path.join(replaypath, "cdbwnu64", "cdrom"))
+os.mkdir(os.path.join(replaypath, "cdbwns8"))
+os.mkdir(os.path.join(replaypath, "cdbwns8", "cdrom"))
+os.mkdir(os.path.join(replaypath, "cdbwns16"))
+os.mkdir(os.path.join(replaypath, "cdbwns16", "cdrom"))
+os.mkdir(os.path.join(replaypath, "cdbwns32"))
+os.mkdir(os.path.join(replaypath, "cdbwns32", "cdrom"))
+os.mkdir(os.path.join(replaypath, "cdbwns64"))
+os.mkdir(os.path.join(replaypath, "cdbwns64", "cdrom"))
+
 os.mkdir(os.path.join(replaypath, "cdbwau8"))
 os.mkdir(os.path.join(replaypath, "cdbwau8", "cdrom"))
 os.mkdir(os.path.join(replaypath, "cdbwau16"))
@@ -259,6 +293,24 @@ os.system("cd " + os.path.join(tutpath, "bin") + " && cp * " + os.path.join(repl
 os.system("cd " + os.path.join(tutpath, "bin") + " && cp * " + os.path.join(replaypath, "cdds32", "cdrom"))
 os.system("cd " + os.path.join(tutpath, "bin") + " && cp * " + os.path.join(replaypath, "cdds64", "cdrom"))
 
+os.system("cd " + os.path.join(tutpath, "bin") + " && cp * " + os.path.join(replaypath, "cdmodu8", "cdrom"))
+os.system("cd " + os.path.join(tutpath, "bin") + " && cp * " + os.path.join(replaypath, "cdmodu16", "cdrom"))
+os.system("cd " + os.path.join(tutpath, "bin") + " && cp * " + os.path.join(replaypath, "cdmodu32", "cdrom"))
+os.system("cd " + os.path.join(tutpath, "bin") + " && cp * " + os.path.join(replaypath, "cdmodu64", "cdrom"))
+os.system("cd " + os.path.join(tutpath, "bin") + " && cp * " + os.path.join(replaypath, "cdmods8", "cdrom"))
+os.system("cd " + os.path.join(tutpath, "bin") + " && cp * " + os.path.join(replaypath, "cdmods16", "cdrom"))
+os.system("cd " + os.path.join(tutpath, "bin") + " && cp * " + os.path.join(replaypath, "cdmods32", "cdrom"))
+os.system("cd " + os.path.join(tutpath, "bin") + " && cp * " + os.path.join(replaypath, "cdmods64", "cdrom"))
+
+os.system("cd " + os.path.join(tutpath, "bin") + " && cp * " + os.path.join(replaypath, "cdbwnu8", "cdrom"))
+os.system("cd " + os.path.join(tutpath, "bin") + " && cp * " + os.path.join(replaypath, "cdbwnu16", "cdrom"))
+os.system("cd " + os.path.join(tutpath, "bin") + " && cp * " + os.path.join(replaypath, "cdbwnu32", "cdrom"))
+os.system("cd " + os.path.join(tutpath, "bin") + " && cp * " + os.path.join(replaypath, "cdbwnu64", "cdrom"))
+os.system("cd " + os.path.join(tutpath, "bin") + " && cp * " + os.path.join(replaypath, "cdbwns8", "cdrom"))
+os.system("cd " + os.path.join(tutpath, "bin") + " && cp * " + os.path.join(replaypath, "cdbwns16", "cdrom"))
+os.system("cd " + os.path.join(tutpath, "bin") + " && cp * " + os.path.join(replaypath, "cdbwns32", "cdrom"))
+os.system("cd " + os.path.join(tutpath, "bin") + " && cp * " + os.path.join(replaypath, "cdbwns64", "cdrom"))
+
 os.system("cd " + os.path.join(tutpath, "bin") + " && cp * " + os.path.join(replaypath, "cdbwau8", "cdrom"))
 os.system("cd " + os.path.join(tutpath, "bin") + " && cp * " + os.path.join(replaypath, "cdbwau16", "cdrom"))
 os.system("cd " + os.path.join(tutpath, "bin") + " && cp * " + os.path.join(replaypath, "cdbwau32", "cdrom"))
@@ -357,6 +409,24 @@ guestcmdds8 = "guest:cdds8 || cd " + os.path.join(replaypath, "cdds8", "cdrom") 
 guestcmdds16 = "guest:cdds16 || cd " + os.path.join(replaypath, "cdds16", "cdrom") + " && ./turn_on_taint && ./div_sint16"
 guestcmdds32 = "guest:cdds32 || cd " + os.path.join(replaypath, "cdds32", "cdrom") + " && ./turn_on_taint && ./div_sint32"
 guestcmdds64 = "guest:cdds64 || cd " + os.path.join(replaypath, "cdds64", "cdrom") + " && ./turn_on_taint && ./div_sint64"
+
+guestcmdmodu8 = "guest:cdmodu8 || cd " + os.path.join(replaypath, "cdmodu8", "cdrom") + " && ./turn_on_taint && ./mod_uint8"
+guestcmdmodu16 = "guest:cdmodu16 || cd " + os.path.join(replaypath, "cdmodu16", "cdrom") + " && ./turn_on_taint && ./mod_uint16"
+guestcmdmodu32 = "guest:cdmodu32 || cd " + os.path.join(replaypath, "cdmodu32", "cdrom") + " && ./turn_on_taint && ./mod_uint32"
+guestcmdmodu64 = "guest:cdmodu64 || cd " + os.path.join(replaypath, "cdmodu64", "cdrom") + " && ./turn_on_taint && ./mod_uint64"
+guestcmdmods8 = "guest:cdmods8 || cd " + os.path.join(replaypath, "cdmods8", "cdrom") + " && ./turn_on_taint && ./mod_sint8"
+guestcmdmods16 = "guest:cdmods16 || cd " + os.path.join(replaypath, "cdmods16", "cdrom") + " && ./turn_on_taint && ./mod_sint16"
+guestcmdmods32 = "guest:cdmods32 || cd " + os.path.join(replaypath, "cdmods32", "cdrom") + " && ./turn_on_taint && ./mod_sint32"
+guestcmdmods64 = "guest:cdmods64 || cd " + os.path.join(replaypath, "cdmods64", "cdrom") + " && ./turn_on_taint && ./mod_sint64"
+
+guestcmdbwnu8 = "guest:cdbwnu8 || cd " + os.path.join(replaypath, "cdbwnu8", "cdrom") + " && ./turn_on_taint && ./bwnot_uint8"
+guestcmdbwnu16 = "guest:cdbwnu16 || cd " + os.path.join(replaypath, "cdbwnu16", "cdrom") + " && ./turn_on_taint && ./bwnot_uint16"
+guestcmdbwnu32 = "guest:cdbwnu32 || cd " + os.path.join(replaypath, "cdbwnu32", "cdrom") + " && ./turn_on_taint && ./bwnot_uint32"
+guestcmdbwnu64 = "guest:cdbwnu64 || cd " + os.path.join(replaypath, "cdbwnu64", "cdrom") + " && ./turn_on_taint && ./bwnot_uint64"
+guestcmdbwns8 = "guest:cdbwns8 || cd " + os.path.join(replaypath, "cdbwns8", "cdrom") + " && ./turn_on_taint && ./bwnot_sint8"
+guestcmdbwns16 = "guest:cdbwns16 || cd " + os.path.join(replaypath, "cdbwns16", "cdrom") + " && ./turn_on_taint && ./bwnot_sint16"
+guestcmdbwns32 = "guest:cdbwns32 || cd " + os.path.join(replaypath, "cdbwns32", "cdrom") + " && ./turn_on_taint && ./bwnot_sint32"
+guestcmdbwns64 = "guest:cdbwns64 || cd " + os.path.join(replaypath, "cdbwns64", "cdrom") + " && ./turn_on_taint && ./bwnot_sint64"
 
 guestcmdbwau8 = "guest:cdbwau8 || cd " + os.path.join(replaypath, "cdbwau8", "cdrom") + " && ./turn_on_taint && ./bwand_uint8"
 guestcmdbwau16 = "guest:cdbwau16 || cd " + os.path.join(replaypath, "cdbwau16", "cdrom") + " && ./turn_on_taint && ./bwand_uint16"
@@ -592,6 +662,76 @@ except:
 
 
 try:
+    record_debian(guestcmdmodu8, "cdmodu8", "i386")
+except:
+    print("ok")
+try:
+    record_debian(guestcmdmodu16, "cdmodu16", "i386")
+except:
+    print("ok")
+try:
+    record_debian(guestcmdmodu32, "cdmodu32", "i386")
+except:
+    print("ok")
+try:
+    record_debian(guestcmdmodu64, "cdmodu64", "i386")
+except:
+    print("ok")
+try:
+    record_debian(guestcmdmods8, "cdmods8", "i386")
+except:
+    print("ok")
+try:
+    record_debian(guestcmdmods16, "cdmods16", "i386")
+except:
+    print("ok")
+try:
+    record_debian(guestcmdmods32, "cdmods32", "i386")
+except:
+    print("ok")
+try:
+    record_debian(guestcmdmods64, "cdmods64", "i386")
+except:
+    print("ok")
+
+
+
+try:
+    record_debian(guestcmdbwnu8, "cdbwnu8", "i386")
+except:
+    print("ok")
+try:
+    record_debian(guestcmdbwnu16, "cdbwnu16", "i386")
+except:
+    print("ok")
+try:
+    record_debian(guestcmdbwnu32, "cdbwnu32", "i386")
+except:
+    print("ok")
+try:
+    record_debian(guestcmdbwnu64, "cdbwnu64", "i386")
+except:
+    print("ok")
+try:
+    record_debian(guestcmdbwns8, "cdbwns8", "i386")
+except:
+    print("ok")
+try:
+    record_debian(guestcmdbwns16, "cdbwns16", "i386")
+except:
+    print("ok")
+try:
+    record_debian(guestcmdbwns32, "cdbwns32", "i386")
+except:
+    print("ok")
+try:
+    record_debian(guestcmdbwns64, "cdbwns64", "i386")
+except:
+    print("ok")
+
+
+
+try:
     record_debian(guestcmdbwau8, "cdbwau8", "i386")
 except:
     print("ok")
@@ -620,7 +760,7 @@ try:
 except:
     print("ok")
 try:
-    record_debian(guestcmdbwa64, "cdbwas64", "i386")
+    record_debian(guestcmdbwas64, "cdbwas64", "i386")
 except:
     print("ok")
 
@@ -655,7 +795,7 @@ try:
 except:
     print("ok")
 try:
-    record_debian(guestcmdbwo64, "cdbwos64", "i386")
+    record_debian(guestcmdbwos64, "cdbwos64", "i386")
 except:
     print("ok")
 
@@ -690,7 +830,7 @@ try:
 except:
     print("ok")
 try:
-    record_debian(guestcmdbwx64, "cdbwxs64", "i386")
+    record_debian(guestcmdbwxs64, "cdbwxs64", "i386")
 except:
     print("ok")
 
@@ -725,7 +865,7 @@ try:
 except:
     print("ok")
 try:
-    record_debian(guestcmdbwsl64, "cdbwsls64", "i386")
+    record_debian(guestcmdbwsls64, "cdbwsls64", "i386")
 except:
     print("ok")
 
@@ -760,7 +900,7 @@ try:
 except:
     print("ok")
 try:
-    record_debian(guestcmdbwsr64, "cdbwsrs64", "i386")
+    record_debian(guestcmdbwsrs64, "cdbwsrs64", "i386")
 except:
     print("ok")
 

@@ -46,6 +46,22 @@ CSRC=			\
 		div_uint16 \
 		div_uint32 \
 		div_uint64 \
+		mod_sint8 \
+		mod_sint16 \
+		mod_sint32 \
+		mod_sint64 \
+		mod_uint8 \
+		mod_uint16 \
+		mod_uint32 \
+		mod_uint64 \
+		bwnot_sint8 \
+		bwnot_sint16 \
+		bwnot_sint32 \
+		bwnot_sint64 \
+		bwnot_uint8 \
+		bwnot_uint16 \
+		bwnot_uint32 \
+		bwnot_uint64 \
 		bwand_sint8 \
 		bwand_sint16 \
 		bwand_sint32 \
