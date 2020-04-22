@@ -35,26 +35,26 @@ int main(int argc, char **argv) {
     panda_taint_label_buffer(&buf[6], b6_LABEL, sizeof(uint8_t));
     panda_taint_label_buffer(&buf[7], b7_LABEL, sizeof(uint8_t));
 
-    panda_taint_assert_label_range(&buf[0], sizeof(uint8_t), b0_LABEL);
-    panda_taint_assert_label_range(&buf[1], sizeof(uint8_t), b1_LABEL);
-    panda_taint_assert_label_range(&buf[2], sizeof(uint8_t), b2_LABEL);
-    panda_taint_assert_label_range(&buf[3], sizeof(uint8_t), b3_LABEL);
-    panda_taint_assert_label_range(&buf[4], sizeof(uint8_t), b4_LABEL);
-    panda_taint_assert_label_range(&buf[5], sizeof(uint8_t), b5_LABEL);
-    panda_taint_assert_label_range(&buf[6], sizeof(uint8_t), b6_LABEL);
-    panda_taint_assert_label_range(&buf[7], sizeof(uint8_t), b7_LABEL);
+    panda_taint_assert_label_found_range(&buf[0], sizeof(uint8_t), b0_LABEL);
+    panda_taint_assert_label_found_range(&buf[1], sizeof(uint8_t), b1_LABEL);
+    panda_taint_assert_label_found_range(&buf[2], sizeof(uint8_t), b2_LABEL);
+    panda_taint_assert_label_found_range(&buf[3], sizeof(uint8_t), b3_LABEL);
+    panda_taint_assert_label_found_range(&buf[4], sizeof(uint8_t), b4_LABEL);
+    panda_taint_assert_label_found_range(&buf[5], sizeof(uint8_t), b5_LABEL);
+    panda_taint_assert_label_found_range(&buf[6], sizeof(uint8_t), b6_LABEL);
+    panda_taint_assert_label_found_range(&buf[7], sizeof(uint8_t), b7_LABEL);
 
     uint8_t *buf2 = (uint8_t *)malloc(8*sizeof(uint8_t));
     memcpy((void *)buf2, (void *)buf, 8);
 
-    panda_taint_assert_label_range(&buf2[0], sizeof(uint8_t), b0_LABEL);
-    panda_taint_assert_label_range(&buf2[1], sizeof(uint8_t), b1_LABEL);
-    panda_taint_assert_label_range(&buf2[2], sizeof(uint8_t), b2_LABEL);
-    panda_taint_assert_label_range(&buf2[3], sizeof(uint8_t), b3_LABEL);
-    panda_taint_assert_label_range(&buf2[4], sizeof(uint8_t), b4_LABEL);
-    panda_taint_assert_label_range(&buf2[5], sizeof(uint8_t), b5_LABEL);
-    panda_taint_assert_label_range(&buf2[6], sizeof(uint8_t), b6_LABEL);
-    panda_taint_assert_label_range(&buf2[7], sizeof(uint8_t), b7_LABEL);
+    panda_taint_assert_label_found_range(&buf2[0], sizeof(uint8_t), b0_LABEL);
+    panda_taint_assert_label_found_range(&buf2[1], sizeof(uint8_t), b1_LABEL);
+    panda_taint_assert_label_found_range(&buf2[2], sizeof(uint8_t), b2_LABEL);
+    panda_taint_assert_label_found_range(&buf2[3], sizeof(uint8_t), b3_LABEL);
+    panda_taint_assert_label_found_range(&buf2[4], sizeof(uint8_t), b4_LABEL);
+    panda_taint_assert_label_found_range(&buf2[5], sizeof(uint8_t), b5_LABEL);
+    panda_taint_assert_label_found_range(&buf2[6], sizeof(uint8_t), b6_LABEL);
+    panda_taint_assert_label_found_range(&buf2[7], sizeof(uint8_t), b7_LABEL);
 
     return 0;
 }

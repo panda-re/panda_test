@@ -106,21 +106,12 @@ void hypercall(void *buf, unsigned long len, long label, unsigned long off,
 }
 
 static inline
-/*uint32_t*/void hypercall_for_query(void *buf, unsigned long off, long label) {
+void hypercall_for_query(void *buf, unsigned long off, long label, long positive) {
   int eax = QUERY_BUFFER;
   void *ebx = buf;
   unsigned long ecx = off;
-//  void *edx = taint_label_storage;
-  void *edx = 0;
+  long edx = positive;
   long edi = label;
-
-//hypercall(buf, 1, 0, 0, QUERY_BUFFER);
-//return 0;
-//  *num_labels = 0;
-
-//  printf("eax %08X\n", eax);
-
-//  uint32_t rv = 0;
 
   asm __volatile__
       ("mov  %0, %%eax \t\n\
@@ -135,8 +126,6 @@ static inline
        : "eax", "ebx", "ecx", "edx", "edi" 
       );
 }
-//#endif // TARGET_I386
-
 
 /* buf is the address of the buffer to be labeled
  *  * label is the label to be applied to the buffer
@@ -147,19 +136,30 @@ void panda_taint_label_buffer(void *buf, int label, unsigned long len) {
 }
 
 static inline
-void panda_taint_query_buffer(void *buf, unsigned long off, long label) {
-    hypercall_for_query(buf, off, label);
+void panda_taint_query_buffer(void *buf, unsigned long off, long label, long positive) {
+    hypercall_for_query(buf, off, label, positive);
 }
 
 
-static void panda_taint_assert_label(void *buf, uint32_t off, uint32_t expected_label) {
-        panda_taint_query_buffer(buf, off, expected_label);
+static void panda_taint_assert_label_found(void *buf, uint32_t off, uint32_t expected_label) {
+        panda_taint_query_buffer(buf, off, expected_label, 1);
 }
 
-static void panda_taint_assert_label_range(void *buf, size_t len, uint32_t expected_label) {
+static void panda_taint_assert_label_found_range(void *buf, size_t len, uint32_t expected_label) {
     int i;
     for(i=0;i<len;i++) {
-        panda_taint_assert_label(buf, i, expected_label);
+        panda_taint_assert_label_found(buf, i, expected_label);
+    }
+}
+
+static void panda_taint_assert_label_not_found(void *buf, uint32_t off, uint32_t expected_label) {
+        panda_taint_query_buffer(buf, off, expected_label, 0);
+}
+
+static void panda_taint_assert_label_not_found_range(void *buf, size_t len, uint32_t expected_label) {
+    int i;
+    for(i=0;i<len;i++) {
+        panda_taint_assert_label_not_found(buf, i, expected_label);
     }
 }
 #endif
