@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 
 #define TARGET_I386
 
@@ -13,6 +14,28 @@
 static const int LABEL_BUFFER = 7;
 static const int LABEL_BUFFER_POS = 8;
 static const int QUERY_BUFFER = 9;
+
+static inline void hypercall_log(char *c_str) {
+  int eax = 12;
+  unsigned long ebx = strlen(c_str)+1;
+  void *ecx = (void *)c_str;
+  unsigned long edx = 0;
+  long edi = 0;
+
+  asm __volatile__
+      ("mov  %0, %%eax \t\n\
+        mov  %1, %%ebx \t\n\
+        mov  %2, %%ecx \t\n\
+        mov  %3, %%edx \t\n\
+        mov  %4, %%edi \t\n\
+        cpuid \t\n\
+       "
+      : /* no output registers */
+      : "g" (eax), "g" (ebx), "g" (ecx), "g" (edx), "g" (edi) /* input operands */
+       : "eax", "ebx", "ecx", "edx", "edi" /* clobbered registers */
+      );
+  return;
+}
 
 static inline void hypercall_query_reg(uint32_t reg_num, uint32_t off, long label) {
   int eax = 11;
@@ -140,7 +163,6 @@ void panda_taint_query_buffer(void *buf, unsigned long off, long label, long pos
     hypercall_for_query(buf, off, label, positive);
 }
 
-
 static void panda_taint_assert_label_found(void *buf, uint32_t off, uint32_t expected_label) {
         panda_taint_query_buffer(buf, off, expected_label, 1);
 }
@@ -162,4 +184,9 @@ static void panda_taint_assert_label_not_found_range(void *buf, size_t len, uint
         panda_taint_assert_label_not_found(buf, i, expected_label);
     }
 }
+
+static void panda_taint_log(char *c_str) {
+    hypercall_log(c_str);
+}
+
 #endif

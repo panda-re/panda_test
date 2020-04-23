@@ -46,6 +46,7 @@ int main(int argc, char **argv) {
         fprintf(cfile, "    the_type x = (the_type)1;\n");
         fprintf(cfile, "    the_type y = (the_type)2;\n");
         fprintf(cfile, "    the_type z = (the_type)0;\n");
+        fprintf(cfile, "    panda_taint_log(\"%s_%s\");\n", bin_names[i], types[j]);
         fprintf(cfile, "    panda_taint_label_buffer(&x, x_LABEL, sizeof(the_type));\n");
         fprintf(cfile, "    panda_taint_label_buffer(&y, y_LABEL, sizeof(the_type));\n");
         fprintf(cfile, "    panda_taint_assert_label_found_range(&x, sizeof(the_type), x_LABEL);\n");
@@ -90,6 +91,7 @@ int main(int argc, char **argv) {
         fprintf(cfile, "int main(int argc, char **argv) {\n");
         fprintf(cfile, "    the_type x = (the_type)1;\n");
         fprintf(cfile, "    the_type z = (the_type)0;\n");
+        fprintf(cfile, "    panda_taint_log(\"%s_%s\");\n", un_names[i], types[j]);
         fprintf(cfile, "    panda_taint_label_buffer(&x, x_LABEL, sizeof(the_type));\n");
         fprintf(cfile, "    panda_taint_assert_label_found_range(&x, sizeof(the_type), x_LABEL);\n");
         fprintf(cfile, "    panda_taint_assert_label_not_found_range(&z, sizeof(the_type), x_LABEL);\n");

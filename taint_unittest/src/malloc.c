@@ -20,6 +20,9 @@ for i in [0,7] assert get taint label on buf[i] = Lbufi
 int main(int argc, char **argv) {
 
     char *buf = (char *)malloc(8);
+
+    panda_taint_log("malloc");
+
     memset((void *)buf, 0xff, 8);
 
     panda_taint_label_buffer(&buf[0], b0_LABEL, sizeof(char));

@@ -7,6 +7,7 @@ int main(int argc, char **argv) {
     the_type x = (the_type)1;
     the_type y = (the_type)2;
     the_type z = (the_type)0;
+    panda_taint_log("bwor_int8");
     panda_taint_label_buffer(&x, x_LABEL, sizeof(the_type));
     panda_taint_label_buffer(&y, y_LABEL, sizeof(the_type));
     panda_taint_assert_label_found_range(&x, sizeof(the_type), x_LABEL);
