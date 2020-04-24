@@ -54,3 +54,8 @@ dkms.conf
 
 # ISO files for mounting in guest
 *.iso
+
+# Misc
+*.deb
+*.tmp
+*.qcow
