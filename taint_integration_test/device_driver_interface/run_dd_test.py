@@ -18,17 +18,25 @@ GUEST_PROG_DIR = os.path.join(os.sep + "root", TEST_PROG_DIR)
 # Since the kernel module is compiled on the host, guest kernel needs to be a reasonably close version
 # Otherwise, will get "Error: could not insert module tt_ioctl_module.ko: Invalid module format"
 COMPAT_QCOW = "ubuntu_1604_x86_64.qcow"
-COMPAT_QCOW_URL = "http://panda-re.mit.edu/qcows/linux/ubuntu/1604/x86_64/" + COMPAT_QCOW
+COMPAT_IMG = "xenial-server-cloudimg-amd64-disk1.img"
+BASE_URL = "http://panda-re.mit.edu/qcows/linux/ubuntu/1604/x86_64/"
+COMPAT_QCOW_URL = BASE_URL + COMPAT_QCOW
+COMPAT_IMG_URL = BASE_URL + COMPAT_IMG
 HOST_QCOW_PATH = os.path.join(CURR_DIR, COMPAT_QCOW)
+HOST_IMG_PATH = os.path.join(CURR_DIR, COMPAT_IMG)
 
 def host_download_qcow():
     if not os.path.isfile(HOST_QCOW_PATH):
-        print("Downloading \'{}\'...".format(COMPAT_QCOW))
+        print("\nDownloading \'{}\'...".format(COMPAT_QCOW))
         wget.download(COMPAT_QCOW_URL)
         assert(os.path.isfile(HOST_QCOW_PATH))
+    if not os.path.isfile(HOST_IMG_PATH):
+        print("\nDownloading \'{}\'...".format(COMPAT_IMG))
+        wget.download(COMPAT_IMG_URL)
+        assert(os.path.isfile(HOST_IMG_PATH))
 
 def host_build_test_progs():
-    print("Building \'{}\' and \'{}\'...".format(TEST_PROG_USR, TEST_PROG_MOD))
+    print("\nBuilding \'{}\' and \'{}\'...".format(TEST_PROG_USR, TEST_PROG_MOD))
     output = subprocess.check_output(
         ["make", "clean", "&&", "make"],
         shell=True,
