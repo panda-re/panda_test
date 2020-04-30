@@ -4,6 +4,7 @@ LDFLAGS = -melf_i386
 CC=gcc
 AS=nasm
 LD=ld
+INCLUDES= -I../taint_include
 
 CSRC=			\
 		add_double \
@@ -112,11 +113,15 @@ CSRC=			\
 ASMSRC=			\
 	eax_test
 
-all:	$(CSRC) $(ASMSRC)
+all: dirs $(CSRC) $(ASMSRC)
+
+dirs:
+	mkdir -p bin
+	mkdir -p obj
 
 %:	src/%.c
-		$(CC) $(CFLAGS) -c $< -o obj/$@.o
-		$(CC) $(CFLAGS) obj/$@.o -o bin/$@
+		$(CC) $(CFLAGS) $(INCLUDES) -c $< -o obj/$@.o
+		$(CC) $(CFLAGS) $(INCLUDES) obj/$@.o -o bin/$@
 
 %:	src/%.asm
 		$(AS) $(ASFLAGS) $< -o obj/$@.o
@@ -124,6 +129,6 @@ all:	$(CSRC) $(ASMSRC)
 
 .PHONY : clean
 clean :
-	-rm obj/*.o bin/*
+	-rm obj/* bin/*
 	-rmdir obj/
 	-rmdir bin/

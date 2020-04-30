@@ -70,6 +70,9 @@ def run_in_guest():
         )
     ))
 
+    # Logs
+    print(panda.run_serial_cmd("dmesg | tail -30"))
+
     panda.end_analysis()
 
 if __name__ == "__main__":
