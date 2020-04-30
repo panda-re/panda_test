@@ -1,9 +1,10 @@
 obj-m += tt_ioctl_module.o
 
+INCLUDES= -I../../../taint_include
 KROOT = /lib/modules/$(shell uname -r)/build
 
-CFLAGS_USER="-O2 -Wall -std=gnu11 -pthread"
-CFLAGS_KERN="-O2 -Wall"
+CFLAGS_USER="-O2 -Wall -std=gnu11 -pthread $(INCLUDES)"
+CFLAGS_KERN="-O2 -Wall $(INCLUDES)"
 
 all allofit: userprogs modules
 

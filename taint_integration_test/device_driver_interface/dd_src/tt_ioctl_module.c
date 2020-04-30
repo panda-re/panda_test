@@ -1,7 +1,7 @@
 #include <linux/module.h>
 
 #include "tt_mdev.h"
-#include "tt_ioctl_cmds.h"
+#include "tt_ioctl_common.h"
 
 #define XOR_CONST 0x13
 #define DEF_CONST 0xFF
@@ -71,6 +71,10 @@ static inline long tt_dev_unlocked_ioctl(struct file *fp, unsigned int cmd, unsi
         }
 
         memset(buf, DEF_CONST, buf_len);
+
+        #ifdef TEST_TAINT
+            panda_taint_label_buffer(buf, TAINTED_KERN, buf_len);
+        #endif
     }
 
     direction = _IOC_DIR(cmd);
@@ -84,13 +88,41 @@ static inline long tt_dev_unlocked_ioctl(struct file *fp, unsigned int cmd, unsi
 
                 // Ephemeral write
                 case W_EPHEME:
+
+                    // Before write - only kernel taint label
+                    #ifdef TEST_TAINT
+                        panda_taint_assert_label_not_found_range(buf, TAINTED_USER, buf_len);
+                        panda_taint_assert_label_found_range(buf, TAINTED_KERN, buf_len);
+                    #endif
+
                     ret_val = write_buf(io_argp, buf, buf_len);
+
+                    // After write - both kernel and user taint labels
+                    #ifdef TEST_TAINT
+                        panda_taint_assert_label_found_range(buf, TAINTED_USER, buf_len);
+                        panda_taint_assert_label_found_range(buf, TAINTED_KERN, buf_len);
+                    #endif
+
                     kfree(buf);
                     break;
 
                 // Persistant write
                 case W_PERSIS:
+
+                    // Before write - no taint labels
+                    #ifdef TEST_TAINT
+                        panda_taint_assert_label_not_found_range(buf, TAINTED_USER, buf_len);
+                        panda_taint_assert_label_not_found_range(buf, TAINTED_KERN, buf_len);
+                    #endif
+
                     ret_val = write_buf(io_argp, tt_dev_kbuf, buf_len);
+
+                    // After write - only user taint label
+                    #ifdef TEST_TAINT
+                        panda_taint_assert_label_found_range(buf, TAINTED_USER, buf_len);
+                        panda_taint_assert_label_not_found_range(buf, TAINTED_KERN, buf_len);
+                    #endif
+
                     break;
 
                 default:
@@ -108,18 +140,44 @@ static inline long tt_dev_unlocked_ioctl(struct file *fp, unsigned int cmd, unsi
                 // Ephemeral read
                 case R_EPHEME:
 
-                    // Current buff contents XORed with an arbitray constant
-                    // TODO (tnballo): taint label test for 2 labels
-                    for (i = 0; i < buf_len; ++i) {
-                        buf[i] = buf[i] ^ XOR_CONST;
-                    }
+                    // Before read - only kernel taint label
+                    #ifdef TEST_TAINT
+                        panda_taint_assert_label_not_found_range(buf, TAINTED_USER, buf_len);
+                        panda_taint_assert_label_found_range(buf, TAINTED_KERN, buf_len);
+                    #endif
 
                     ret_val = read_buf(io_argp, buf, buf_len);
+
+                    // After read - only kernel taint label
+                    #ifdef TEST_TAINT
+                        panda_taint_assert_label_not_found_range(buf, TAINTED_USER, buf_len);
+                        panda_taint_assert_label_found_range(buf, TAINTED_KERN, buf_len);
+                    #endif
+
                     kfree(buf);
                     break;
 
                 // Persistant read
                 case R_PERSIS:
+
+                    // Before read - only user taint label (usersapce prog will have written)
+                    #ifdef TEST_TAINT
+                        panda_taint_assert_label_found_range(buf, TAINTED_USER, buf_len);
+                        panda_taint_assert_label_not_found_range(buf, TAINTED_KERN, buf_len);
+                    #endif
+
+                    // Current buff contents XORed with an arbitrary constant
+                    // TODO (tnballo): how to taint label const for 2nd label?
+                    for (i = 0; i < buf_len; ++i) {
+                        buf[i] = buf[i] ^ XOR_CONST;
+                    }
+
+                    // TODO: finish this one
+                    #ifdef TEST_TAINT
+                        panda_taint_assert_label_found_range(buf, TAINTED_USER, buf_len);
+                        //panda_taint_assert_label_found_range(buf, TAINTED_KERN, buf_len);
+                    #endif
+
                     ret_val = read_buf(io_argp, tt_dev_kbuf, buf_len);
                     break;
 
