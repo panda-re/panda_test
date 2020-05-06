@@ -1,9 +1,28 @@
-CFLAGS = -m32 -O0
-ASFLAGS = -felf32
-LDFLAGS = -melf_i386
+CFLAGS_I386 = -m32 -O0
+CFLAGS_X64 = -O0
+
+ASFLAGS_I386 = -felf32
+ASFLAGS_X64 = -felf64
+
+LDFLAGS_I386 = -melf_i386
+LDFLAGS_X64 =
+
 CC=gcc
 AS=nasm
 LD=ld
+
+ifeq "$(TARGET)" "TARGET_I386"
+CFLAGS=$(CFLAGS_I386)
+ASFLAGS=$(ASFLAGS_I386)
+LDFLAGS=$(LDFLAGS_I386)
+endif
+
+ifeq "$(TARGET)" "TARGET_X86_64"
+CFLAGS=$(CFLAGS_X64)
+ASFLAGS=$(ASFLAGS_X64)
+LDFLAGS=$(LDFLAGS_X64)
+endif
+
 INCLUDES= -I../taint_include
 
 SRC=src
@@ -17,11 +36,11 @@ dirs:
 	mkdir -p obj
 
 %:	src/%.c
-		$(CC) $(CFLAGS) $(INCLUDES) -c $< -o obj/$@.o
-		$(CC) $(CFLAGS) $(INCLUDES) obj/$@.o -o bin/$@
+		$(CC) -D$(TARGET) $(CFLAGS) $(INCLUDES) -c $< -o obj/$@.o
+		$(CC) -D$(TARGET) $(CFLAGS) $(INCLUDES) obj/$@.o -o bin/$@
 
 %:	src/%.asm
-		$(AS) $(ASFLAGS) $< -o obj/$@.o
+		$(AS) -D$(TARGET) $(ASFLAGS) $< -o obj/$@.o
 		$(LD) $(LDFLAGS) obj/$@.o -o bin/$@
 
 .PHONY : clean
