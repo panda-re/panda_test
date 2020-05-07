@@ -57,6 +57,17 @@ void hypercall(uint64_t rax, uint64_t rbx, uint64_t rcx, uint64_t rdx, uint64_t 
 #define HYPERCALL(a,b,c,d,e) hypercall((uint64_t)(a),(uint64_t)(b),(uint64_t)(c),(uint64_t)(d),(uint64_t)(e))
 #endif
 
+#if defined(TARGET_ARM)
+// how many bits?
+static inline
+void hypercall(int r0, int r1, int r2, int r3, int r4) {
+    // whatever instruction moves register values around
+    // MCR p7, ????????????
+}
+
+#define HYPERCALL(a,b,c,d,e) hypercall((int)(a),(int)(b),(int)(c),(int)(d),(int)(e))
+#endif
+
 #if !defined(HYPERCALL)
 #error "HYPERCALL wrapper macro not defined?"
 #endif
@@ -67,13 +78,13 @@ void hypercall_log(char *c_str) {
 }
 
 static inline
-void hypercall_query_reg(uint32_t reg_num, uint32_t off, long label) {
-    HYPERCALL(QUERY_REGISTER, reg_num, off, 0, label);
+void hypercall_query_reg(uint32_t reg_num, uint32_t reg_off, long label, long positive) {
+    HYPERCALL(QUERY_REGISTER, reg_num, reg_off, label, positive);
 }
 
 static inline
-void hypercall_label_reg(uint32_t reg_num, uint32_t off, long label) {
-    HYPERCALL(LABEL_REGISTER, reg_num, off, 0, label);
+void hypercall_label_reg(uint32_t reg_num, uint32_t reg_off, long label) {
+    HYPERCALL(LABEL_REGISTER, reg_num, reg_off, label, 0);
 }
 
 static inline
@@ -83,12 +94,12 @@ void hypercall_enable_taint() {
 
 static inline
 void hypercall_label_buffer(void *buf, unsigned long len, long label) {
-    HYPERCALL(LABEL_BUFFER, buf, len, 0, label);
+    HYPERCALL(LABEL_BUFFER, buf, len, label, 0);
 }
 
 static inline
-void hypercall_query_buffer(void *buf, unsigned long off, long label, long positive) {
-    HYPERCALL(QUERY_BUFFER, buf, off, positive, label);
+void hypercall_query_buffer(void *buf, uint32_t off, long label, long positive) {
+    HYPERCALL(QUERY_BUFFER, buf, off, label, positive);
 }
 
 /* buf is the address of the buffer to be labeled
