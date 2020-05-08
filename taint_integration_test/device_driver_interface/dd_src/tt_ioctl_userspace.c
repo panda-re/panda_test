@@ -14,7 +14,8 @@
 #include <errno.h>
 #include <assert.h>
 
-#include "tt_ioctl_cmds.h"
+#include "tt_ioctl_common.h"
+#include "taint.h"
 
 #define TT_IOW(type, nr, size) ((int)_IOC(_IOC_WRITE, (type), (nr), size))
 #define TT_IOR(type, nr, size) ((int)_IOC(_IOC_READ, (type), (nr), size))
@@ -145,11 +146,17 @@ int main(int argc, char *argv[]) {
     memcpy(buf_copy, buf, buf_len);
 
     // Write ephemeral kernel buffer
+    #ifdef TEST_TAINT
+        panda_taint_label_buffer(buf, TAINTED_USER, buf_len);
+    #endif
     cmd = TT_IOW(TT_IOC_TYPE, W_EPHEME, buf_len);
     uncopied_byte_cnt = ioctl(fd, cmd, buf);
     notify_write(uncopied_byte_cnt, buf, buf_len);
 
     // Write persistant kernel buffer
+    #ifdef TEST_TAINT
+        panda_taint_label_buffer(buf, TAINTED_USER, buf_len);
+    #endif
     cmd = TT_IOW(TT_IOC_TYPE, W_PERSIS, buf_len);
     uncopied_byte_cnt = ioctl(fd, cmd, buf);
     notify_write(uncopied_byte_cnt, buf, buf_len);
@@ -160,12 +167,19 @@ int main(int argc, char *argv[]) {
     cmd = TT_IOR(TT_IOC_TYPE, R_EPHEME, buf_len);
     uncopied_byte_cnt = ioctl(fd, cmd, buf);
     notify_read(uncopied_byte_cnt, buf, buf_len);
+    #ifdef TEST_TAINT
+        panda_taint_assert_label_found_range(buf, TAINTED_KERN, buf_len);
+    #endif
 
     // Read and verify persistant kernel buffer
     cmd = TT_IOR(TT_IOC_TYPE, R_PERSIS, buf_len);
     uncopied_byte_cnt = ioctl(fd, cmd, buf);
     notify_read(uncopied_byte_cnt, buf, buf_len);
     assert(!memcmp(buf, buf_copy, buf_len));
+    #ifdef TEST_TAINT
+        panda_taint_assert_label_found_range(buf, TAINTED_USER, buf_len);
+        //panda_taint_assert_label_found_range(buf, TAINTED_KERN, buf_len);
+    #endif
 
     // Process -> Kernel Driver -> Other Process -----------------------------------------------------------------------
 
@@ -185,6 +199,9 @@ int main(int argc, char *argv[]) {
         }
 
         if (buf_copy && (!memcmp(buf, buf_copy, buf_len))) {
+            #ifdef TEST_TAINT
+                panda_taint_assert_label_found_range(buf, TAINTED_KERN, buf_len);
+            #endif
             printf("Signal-triggered buffer copy to child process succeeded.\n");
             exit(EXIT_SUCCESS);
         } else {

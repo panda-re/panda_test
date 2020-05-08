@@ -11,6 +11,8 @@
 #include <linux/miscdevice.h>
 #include <linux/oom.h>
 
+#define KERN_MOD
+#define TARGET_X86_64 // Doesn't seem to take the -D flag?
 #define TT_DEV_NAME "taint_test_misc_device"
 #define TT_KBUF_MAX (16 * PAGE_SIZE)
 
