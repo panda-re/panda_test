@@ -5,8 +5,8 @@
 #include <stdint.h>
 #include <string.h>
 
-#if !defined(TARGET_I386) && !defined(TARGET_X86_64)
-#error "Define your architecture (TARGET_I386 or TARGET_X86_64) with -D"
+#if !defined(TARGET_I386) && !defined(TARGET_X86_64) && !defined(TARGET_ARM)
+#error "Define your architecture (TARGET_I386, TARGET_X86_64 or TARGET_ARM) with -D"
 #endif
 
 static const int ENABLE_TAINT = 6;
@@ -58,11 +58,25 @@ void hypercall(uint64_t rax, uint64_t rbx, uint64_t rcx, uint64_t rdx, uint64_t 
 #endif
 
 #if defined(TARGET_ARM)
-// how many bits?
+// how many bits? just going to put "int" there
+// I don't have an arm toolchain so I was only able to verify that
+// this builds with godbolt.org Compiler Explorer
+// but not run it to test with the arm-softmmu taint2 plugin
 static inline
 void hypercall(int r0, int r1, int r2, int r3, int r4) {
-    // whatever instruction moves register values around
-    // MCR p7, ????????????
+    asm __volatile__(
+        "mov  %%r0, %0 \t\n\
+        mov  %%r1, %1 \t\n\
+        mov  %%r2, %2 \t\n\
+        mov  %%r3, %3 \t\n\
+        mov  %%r4, %4 \t\n\
+        mcr  p7, 0, %%r0, %%c0, %%c0, 0\t\n\
+        "
+        : /* no output registers */
+        : "g" (r0), "g" (r1), "g" (r2), "g" (r3), "g" (r4) /* input operands */
+        : "r0", "r1", "r2", "r3", "r4" /* clobbered registers */
+    );
+
 }
 
 #define HYPERCALL(a,b,c,d,e) hypercall((int)(a),(int)(b),(int)(c),(int)(d),(int)(e))
