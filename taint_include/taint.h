@@ -1,9 +1,14 @@
 #ifndef __TAINT_H__
 #define __TAINT_H__
 
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
+#if !defined(KERN_MOD)
+    #include <stdlib.h>
+    #include <stdint.h>
+    #include <string.h>
+#else
+    #include <linux/types.h>
+    #include <linux/string.h>
+#endif
 
 #if !defined(TARGET_I386) && !defined(TARGET_X86_64) && !defined(TARGET_ARM)
 #error "Define your architecture (TARGET_I386, TARGET_X86_64 or TARGET_ARM) with -D"
@@ -105,7 +110,7 @@ void hypercall_label_reg(uint32_t reg_num, uint32_t reg_off, long label) {
 }
 
 static inline
-void hypercall_enable_taint() {
+void hypercall_enable_taint(void) {
     HYPERCALL(ENABLE_TAINT, 0, 0, 0, 0, 0);
 }
 
@@ -144,7 +149,7 @@ void panda_taint_assert_label_not_found(void *buf, uint32_t off, uint32_t expect
 
 static inline
 void panda_taint_assert_label_found_range(void *buf, size_t len, uint32_t expected_label) {
-    int i;
+    size_t i;
     for(i=0;i<len;i++) {
         panda_taint_assert_label_found(buf, i, expected_label);
     }

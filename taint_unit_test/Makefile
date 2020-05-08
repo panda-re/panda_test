@@ -35,11 +35,11 @@ dirs:
 	mkdir -p bin
 	mkdir -p obj
 
-%:	src/%.c
+%:	$(SRC)/%.c
 		$(CC) -D$(TARGET) $(CFLAGS) $(INCLUDES) -c $< -o obj/$@.o
 		$(CC) -D$(TARGET) $(CFLAGS) $(INCLUDES) obj/$@.o -o bin/$@
 
-%:	src/%.asm
+%:	$(SRC)/%.asm
 		$(AS) -D$(TARGET) $(ASFLAGS) $< -o obj/$@.o
 		$(LD) $(LDFLAGS) obj/$@.o -o bin/$@
 

@@ -1,7 +1,6 @@
-#include <linux/module.h>
-
 #include "tt_mdev.h"
 #include "tt_ioctl_common.h"
+#include "../../../taint_include/taint.h" // Doesn't seem to take the regular -I flag?
 
 #define XOR_CONST 0x13
 #define DEF_CONST 0xFF
