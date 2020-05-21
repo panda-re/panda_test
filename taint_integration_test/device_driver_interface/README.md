@@ -15,12 +15,6 @@ Driver inodes are `proc` filesystem paths (e.g. `/dev/device` and `/sys/device`)
 
 Install PyPANDA per [the documentation](https://github.com/panda-re/panda/blob/master/panda/python/docs/USAGE.md#installation).
 
-Download kernel headers (Ubuntu):
-
-```
-apt-get install build-essential linux-headers-`uname -r`
-```
-
 Download Python dependencies:
 
 ```

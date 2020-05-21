@@ -194,6 +194,8 @@ int main(int argc, char *argv[]) {
     // Child: wait for specific signal from parent
     } else if (pid == 0) {
 
+        // Waiting on a global is inefficent and unnecessary for the purposes of this test
+        // but allows us to test signal triggered actions, which may be useful for more involved tests later
         while (!sig_triggered_copy_ok) {
             sleep(1);
         }
