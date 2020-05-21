@@ -24,8 +24,6 @@ def run_in_guest():
     panda.stop_run()
 
 if __name__ == "__main__":
-    # Single arg of arch, defaults to i386
-    arch = "i386" if len(argv) <= 1 else argv[1]
     panda = Panda(
         arch = "i386",
         qcow = "/home/panda/regdir/qcows/wheezy_panda2.qcow2",
