@@ -31,9 +31,7 @@ def run_in_guest():
     panda.copy_to_guest(os.path.join(thisdir,"cdrom"))
     panda.load_plugin("taint2")
 
-    panda.run_serial_cmd("./cdrom/turn_on_taint; ./cdrom/run_all_tests.sh", no_timeout=True)
-    result = panda.finish_serial_cmd()
-    print(result)
+    panda.run_serial_cmd("./cdrom/turn_on_taint; ./cdrom/run_all_tests.sh")
     panda.stop_run()
 
 if __name__ == "__main__":
