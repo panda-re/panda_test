@@ -62,7 +62,6 @@
 ./div_float
 ./div_sint16
 ./div_sint32
-./div_sint64
 ./div_sint8
 ./div_uint16
 ./div_uint32
@@ -73,7 +72,6 @@
 ./memset
 ./mod_sint16
 ./mod_sint32
-./mod_sint64
 ./mod_sint8
 ./mod_uint16
 ./mod_uint32
@@ -103,7 +101,9 @@
 
 # these two are due to 32-bit x86 gcc calling a function to do division and mod in software
 # with all kinds of special / corner cases in the resulting taint based on input values
+#./mod_sint64
 #./mod_uint64
+#./div_sint64
 #./div_uint64
 
 # these are just not up to date
