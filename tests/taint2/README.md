@@ -1,0 +1,1 @@
+* `taint2_i386_record.py` and `taint2_i386_replay.py` to be removed once Jenkins is replaced with GitHub actions - will use `taint2_multi_arch_record_or_replay.py`
