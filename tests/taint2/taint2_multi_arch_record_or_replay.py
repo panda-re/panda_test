@@ -47,17 +47,20 @@ if __name__ == "__main__":
         build_target = "TARGET_I386"
         test_expect_prompt = rb"root@debian-i386:.*"
         test_qcow="/home/panda/regdir/qcows/wheezy_panda2.qcow2"
+        test_mem = "128M"
 
     elif args.arch == "x86_64":
         build_target = "TARGET_X86_64"
         test_expect_prompt = rb"root@ubuntu:.*"
         test_qcow="/home/panda/regdir/qcows/bionic-server-cloudimg-amd64-noaslr-nokaslr.qcow2"
+        test_mem = "1G"
 
     # TODO: not yet supported, need hypercall update in taint.h
     #elif args.arch == "arm":
     #    build_target = "TARGET_ARM"
     #    test_expect_prompt = rb"root@ubuntu:.*"
     #    test_qcow="/home/panda/regdir/qcows/arm_wheezy.qcow2"
+    #    test_mem = "256M"
 
     else:
         raise RuntimeError("Invalid architecture for taint2 unit tests!")
@@ -67,7 +70,8 @@ if __name__ == "__main__":
         arch = args.arch,
         qcow = test_qcow,
         extra_args = "-nographic",
-        expect_prompt = test_expect_prompt
+        expect_prompt = test_expect_prompt,
+        mem = test_mem
     )
 
     # Mode selection
