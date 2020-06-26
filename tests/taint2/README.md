@@ -1,1 +1,3 @@
-* `taint2_i386_record.py` and `taint2_i386_replay.py` to be removed once Jenkins is replaced with GitHub actions - will use `taint2_multi_arch_record_or_replay.py`
+# Note
+
+x86_64 taint unit tests not fully working yet, a hypercall for x86_64 is broken.
