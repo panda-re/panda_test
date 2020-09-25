@@ -6,7 +6,7 @@ from os import remove
 import sys
 import shutil
 from sys import argv
-from panda import blocking, Panda
+from pandare import blocking, Panda
 
 thisdir = os.path.dirname(os.path.realpath(__file__))
 

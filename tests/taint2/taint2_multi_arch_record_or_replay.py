@@ -2,7 +2,7 @@
 
 import os
 import argparse
-from panda import blocking, Panda
+from pandare import blocking, Panda
 
 thisdir = os.path.dirname(os.path.realpath(__file__))
 

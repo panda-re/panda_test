@@ -7,7 +7,7 @@ import sys
 import shutil
 import wget
 from sys import argv
-from panda import blocking, Panda
+from pandare import blocking, Panda
 
 CURR_DIR = os.path.dirname(os.path.abspath(__file__))
 QCOW = "bionic-server-cloudimg-amd64.qcow2"

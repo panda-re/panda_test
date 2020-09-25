@@ -7,7 +7,7 @@ import wget
 import shutil
 from pathlib import Path
 
-from panda import blocking, Panda
+from pandare import blocking, Panda
 
 TEST_PROG_USR = "tt_ioctl_userspace"
 TEST_PROG_MOD = "tt_ioctl_module.ko"
