@@ -62,9 +62,11 @@
 ./div_float
 ./div_sint16
 ./div_sint32
+./div_sint64
 ./div_sint8
 ./div_uint16
 ./div_uint32
+./div_uint64
 ./div_uint8
 ./label
 ./malloc
@@ -72,9 +74,11 @@
 ./memset
 ./mod_sint16
 ./mod_sint32
+./mod_sint64
 ./mod_sint8
 ./mod_uint16
 ./mod_uint32
+./mod_uint64
 ./mod_uint8
 ./mul_double
 ./mul_float
@@ -96,15 +100,6 @@
 ./sub_uint32
 ./sub_uint64
 ./sub_uint8
-
-#disabled due to failures that havent been worked through yet
-
-# these two are due to 32-bit x86 gcc calling a function to do division and mod in software
-# with all kinds of special / corner cases in the resulting taint based on input values
-#./mod_sint64
-#./mod_uint64
-#./div_sint64
-#./div_uint64
 
 # these are just not up to date
 #./eax_test

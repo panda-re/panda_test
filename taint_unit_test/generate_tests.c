@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 int bin_test_floating[10] = {1, 1, 1, 1, 0, 0, 0, 0, 0, 0};
 char *bin_names[10] = {"add", "sub", "mul", "div", "mod", "bwand", "bwor", "bwxor", "bwsl", "bwsr"};
@@ -23,6 +24,10 @@ int main(int argc, char **argv) {
             type_loop_end = end_all_types;
         }
         for(int j=0;j<type_loop_end;j++) {
+        int is_64bit_test = (0 == strcmp(types[j], "uint64")) ||
+                (0 == strcmp(types[j], "int64"));
+        int is_div_test = (0 == strcmp(bin_ops[i], "/"));
+        int is_mod_test = (0 == strcmp(bin_ops[i], "%"));
         char fname[64];
         FILE *cfile;
         if(signedness[j] != 0) {
@@ -43,8 +48,11 @@ int main(int argc, char **argv) {
         fprintf(cfile, "#define x_LABEL 0xCCCCCCCC\n");
         fprintf(cfile, "#define y_LABEL 0xDDDDDDDD\n");
         fprintf(cfile, "int main(int argc, char **argv) {\n");
-        fprintf(cfile, "    the_type x = (the_type)1;\n");
-        fprintf(cfile, "    the_type y = (the_type)2;\n");
+        fprintf(cfile, "    the_type x = (the_type)%s;\n",
+                (is_64bit_test && (is_div_test || is_mod_test)) ?
+                "0x3333333333333333" : "1");
+        fprintf(cfile, "    the_type y = (the_type)%s;\n",
+                (is_64bit_test && is_mod_test) ? "0x2222222222222222" : "2");
         fprintf(cfile, "    the_type z = (the_type)0;\n");
         fprintf(cfile, "    panda_taint_log(\"%s_%s\");\n", bin_names[i], types[j]);
         fprintf(cfile, "    panda_taint_label_buffer(&x, x_LABEL, sizeof(the_type));\n");
