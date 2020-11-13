@@ -1,4 +1,8 @@
 #!/bin/sh
+set -ex
+
+cd $(dirname $0)
+
 ./turn_on_taint
 ./add_double
 ./add_float

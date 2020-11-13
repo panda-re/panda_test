@@ -17,7 +17,7 @@ def prepare_cdrom_iso(build_target):
 
 @blocking
 def run_in_guest_record():
-    panda.record_cmd("./cdrom/turn_on_taint; ./cdrom/run_all_tests.sh",
+    panda.record_cmd("./cdrom/run_all_tests.sh",
         copy_directory=os.path.join(thisdir,"cdrom"),
         iso_name="cdrom.iso",
         recording_name="taint2_tests",
