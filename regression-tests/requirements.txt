@@ -1,0 +1,4 @@
+scapy
+protobuf
+pexpect
+numpy
