@@ -4,7 +4,7 @@
 #define x_LABEL 0xCCCCCCCC
 #define y_LABEL 0xDDDDDDDD
 int main(int argc, char **argv) {
-    the_type x = (the_type)1;
+    the_type x = (the_type)0x3333333333333333;
     the_type y = (the_type)2;
     the_type z = (the_type)0;
     panda_taint_log("div_uint64");
