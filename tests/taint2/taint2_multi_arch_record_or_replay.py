@@ -81,7 +81,7 @@ if __name__ == "__main__":
         panda.run()
 
     elif args.mode == "replay":
-        panda.load_plugin("taint2")
+        panda.load_plugin("taint2", args={"enable_hypercalls": True})
         panda.run_replay("taint2_tests")
 
     else:
